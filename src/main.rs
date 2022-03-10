@@ -10,9 +10,7 @@ fn main() {
     });
 
     if let Err(e) = fthapar::run(config) {
-        // --snip--
         println!("Application error: {}", e);
-
         process::exit(1);
     }
 }

@@ -1,7 +1,8 @@
+use std::error::Error;
+use std::time::Duration;
 use reqwest::blocking::{Client, Response};
 use reqwest::header::CONTENT_TYPE;
 use reqwest::redirect::Policy;
-use std::error::Error;
 
 pub struct Config {
     enrollment_number: u32,
@@ -64,7 +65,7 @@ fn check_password(enrollment_number: u32, password: String) -> Password {
 }
 
 fn make_request(enrollment_number: u32, password: String) -> Result<Response, &'static str> {
-    let client_builder = Client::builder().redirect(Policy::none());
+    let client_builder = Client::builder().redirect(Policy::none()).timeout(Duration::new(5, 0));
     let client = client_builder.build().expect("Failed Building Client");
 
     let body = format!("txtuType=Member+Type&UserType=S&txtCode=Enrollment+No&MemberCode={}&txtPin=Password%2FPin&Password={}&BTNSubmit=Submit", enrollment_number, password);
@@ -74,14 +75,13 @@ fn make_request(enrollment_number: u32, password: String) -> Result<Response, &'
 
     while try_count > 0 {
         res = client
-            .post("https://webkiosk.thapar.edu/CommonFiles/UserAction.jsp")
+            .post("https://webkioskintra.thapar.edu:8443/CommonFiles/UserAction.jsp")
             .header(CONTENT_TYPE, "application/x-www-form-urlencoded")
             .body(body.clone())
             .send();
         
         match res {
             Ok(res) => {
-                println!("{:?}", res.status());
                 return Ok(res)
             }
             Err(_) => try_count -= 1,
