@@ -1,12 +1,12 @@
-use std::error::Error;
 use std::time::Duration;
 use reqwest::blocking::{Client, Response};
 use reqwest::header::CONTENT_TYPE;
 use reqwest::redirect::Policy;
 
 pub struct Config {
-    enrollment_number: u32,
-    password: String,
+    pub enrollment_number_start: u32,
+    pub enrollment_number_end: Option<u32>,
+    pub password: String,
 }
 
 enum Password {
@@ -15,35 +15,30 @@ enum Password {
     Unknown,
 }
 
-impl Config {
-    pub fn new(args: &[String]) -> Result<Config, &'static str> {
-        if args.len() < 3 {
-            return Err("Not enough arguments");
+pub fn run(config: Config) {
+    if let Some(enrollment_number_end) = config.enrollment_number_end {
+
+        for e_number in config.enrollment_number_start..enrollment_number_end + 1 {
+            println!("Checking for {}", e_number);
+            let result = check_password(e_number, config.password.clone());
+
+            match result {
+                Password::Correct => println!("Correct Password"),
+                Password::Incorrect => println!("Incorrect Password"),
+                Password::Unknown => println!("Password Could not be verified"),
+            }
         }
 
-        let enrollment_number = args[1]
-            .clone()
-            .parse()
-            .expect("Enter a valid Enrollment Number");
-        let password = args[2].clone();
+    } else {
+        println!("Checking for {}", config.enrollment_number_start);
+        let result = check_password(config.enrollment_number_start, config.password.clone());
 
-        Ok(Config {
-            enrollment_number,
-            password,
-        })
+        match result {
+            Password::Correct => println!("Correct Password"),
+            Password::Incorrect => println!("Incorrect Password"),
+            Password::Unknown => println!("Password Could not be verified"),
+        }
     }
-}
-
-pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
-    let result = check_password(config.enrollment_number, config.password);
-
-    match result {
-        Password::Correct => println!("Correct Password"),
-        Password::Incorrect => println!("Incorrect Password"),
-        Password::Unknown => println!("Password Could not be verified"),
-    }
-
-    Ok(())
 }
 
 fn check_password(enrollment_number: u32, password: String) -> Password {
