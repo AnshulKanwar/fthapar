@@ -13,7 +13,7 @@ struct Cli {
 
     /// Give a password/pin to be checked agaist
     #[clap(short, long, default_value_t = String::from("12345"))]
-    password: String
+    password: String,
 }
 
 fn main() {
@@ -22,7 +22,7 @@ fn main() {
     let config = Config {
         enrollment_number_start: cli.enrollment_number,
         enrollment_number_end: cli.last_enrollent_number,
-        password: cli.password
+        password: cli.password,
     };
 
     fthapar::run(config);
