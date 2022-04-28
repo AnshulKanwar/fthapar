@@ -2,6 +2,8 @@
 
 A CLI tool written in rust that can be used to check if the password/pin for a particular enrollment number or a range of enrollment numbers on [Thapar Webkiosk](https://webkiosk.thapar.edu) is correct or not.
 
+Note: It uses intranet of Thapar to access webkiosk so make sure you are connected to Thapar's network for it to work.
+
 # ⚠️ Please use this tool responsibly
 
 # Usage
