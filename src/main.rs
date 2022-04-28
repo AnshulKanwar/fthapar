@@ -3,9 +3,7 @@ use clap::Parser;
 use fthapar::Config;
 
 #[derive(Parser, Debug)]
-#[clap(name = "Fthapar")]
-#[clap(author = "Anshul Kanwar <anshulkanwar1@gmail.com>")]
-#[clap(about = "Check if a password on webkios is correct or not")]
+#[clap(author, version, about, long_about = None)]
 struct Cli {
     /// Check password for a single enrollment number
     enrollment_number: u32,
